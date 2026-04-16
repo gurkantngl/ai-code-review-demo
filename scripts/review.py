@@ -15,7 +15,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 import tiktoken
-from github import Github
+from github import Auth, Github
 from openai import OpenAI
 
 # ---------------------------------------------------------------------------
@@ -270,7 +270,7 @@ def _split_large_diff(filepath: str, diff_content: str) -> list[dict[str, str]]:
 
 def get_pr_diff(github_token: str, repo_name: str, pr_number: int) -> str:
     """Fetch the raw unified diff for a pull request via PyGithub."""
-    gh = Github(github_token)
+    gh = Github(auth=Auth.Token(github_token))
     repo = gh.get_repo(repo_name)
     pr = repo.get_pull(pr_number)
 
@@ -293,7 +293,7 @@ def post_review_comment(
     body: str,
 ) -> None:
     """Post a general comment on the PR."""
-    gh = Github(github_token)
+    gh = Github(auth=Auth.Token(github_token))
     repo = gh.get_repo(repo_name)
     pr = repo.get_pull(pr_number)
     pr.create_issue_comment(body)
@@ -311,7 +311,7 @@ def post_inline_comments(
     if not high_reviews:
         return
 
-    gh = Github(github_token)
+    gh = Github(auth=Auth.Token(github_token))
     repo = gh.get_repo(repo_name)
     pr = repo.get_pull(pr_number)
 
